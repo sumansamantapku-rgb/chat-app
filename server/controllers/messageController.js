@@ -1,4 +1,4 @@
-import User from "../models/user";
+import User from "../models/user.js";
 import Message from "../models/Message.js"
 import cloudinary from "../lib/cloudinary.js"
 import { io, userSocketMap} from "../server.js";
@@ -13,7 +13,7 @@ export const getUsersForSidebar = async (req, res)=> {
         // Count number of messages not seen
         const unseenMessages = {}
         const promises = filteredUsers.map(async (user)=>{
-            const messages = await MessageChannel.find({senderId: user._id, receiverId: userId, seen: false})
+            const messages = await Message.find({senderId: user._id, receiverId: userId, seen: false})
             if(messages.length > 0){
                 unseenMessages[user._id] = messages.length;
             }
@@ -52,7 +52,7 @@ export const getUsersForSidebar = async (req, res)=> {
 
  // api to mark message as seen using message id
 
- export const markMessageAsSeen = async (res, req)=> {
+ export const markMessageAsSeen = async (req, res)=> {
     try {
         const {id} = req.params;
         await Message.findByIdAndUpdate(id, {seen : true})
