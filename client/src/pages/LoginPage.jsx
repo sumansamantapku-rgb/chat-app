@@ -1,6 +1,9 @@
 import React from 'react'
 import { useState } from 'react'
 import assets from '../assets/assets'
+import { useContext } from 'react'
+import { AuthContext } from '../context/AuthContext'
+import toast from 'react-hot-toast'
 
 const LoginPage = () => {
 
@@ -10,16 +13,32 @@ const LoginPage = () => {
   const [email, setEmail] = useState("")
    const [password, setPassword] = useState("")
   const [bio, setBio] = useState("")
-   const [isDataSubmitted, setIsDataSubmitted] = useState(false)
+   const [isDataSubmitted, setIsDataSubmitted] = useState(false);
+
+
+   const { login }= useContext(AuthContext);
 
 
    const onSubmitHandler = (event)=>{
     event.preventDefault();
 
     if(currState === 'Sign up' && !isDataSubmitted){
+      if(!fullname || !email || !password){
+        toast.error("Please fill all details");
+        return;
+      }
       setIsDataSubmitted(true)
       return;
     }
+
+    if(currState === "Sign up" && isDataSubmitted){
+      if(!bio.trim()){
+        toast.error("Please provide a bio");
+        return;
+      }
+    }
+
+    login(currState === "Sign up" ? "signup" : "login", { fullName: fullname, email, password, bio })
    }
   
 
@@ -33,24 +52,24 @@ const LoginPage = () => {
       <form onSubmit={onSubmitHandler} className='border-2 bg-white/8 text-white border-gray-500 p-6 flex flex-col gap-6 rounded-lg shadow-lg'>
         <h2 className='font-medium text-2xl flex justify-between items-center'>
           {currState}
-          {isDataSubmitted &&  <img onClick={()=> setIsDataSubmitted(false)} src={assets.arrow_icon} alt="" className='w-5 cursor-pointer' /> }
+          {isDataSubmitted &&  <img onClick={()=> { setIsDataSubmitted(false); setBio(""); }} src={assets.arrow_icon} alt="" className='w-5 cursor-pointer' /> }
          
           </h2>
         {currState === "Sign up" && !isDataSubmitted && (
-                      <input  onChange={(e)=> setFullName(e.target.value)} value={fullname} type="text" className='p-2 border border-gray-500 rounded-md focus:outline-none' placeholder="Full Name" required />
+                      <input  onChange={(e)=> setFullName(e.target.value)} value={fullname} type="text" className='p-2 border border-gray-500 rounded-md focus:outline-none' placeholder="Full Name" />
 
         )}
 
         {!isDataSubmitted &&(
           <>
-          <input onChange={(e)=> setEmail(e.target.value)} value={email} type="email" placeholder='Email Address' required className='p-2 border border-gray-500 rounded-md focus-outline-none focus:ring-2 focus:ring-indigo-500'/>
-          <input onChange={(e)=> setEmail(e.target.value)} value={password} type="password" placeholder='password' required className='p-2 border border-gray-500 rounded-md focus-outline-none focus:ring-2 focus:ring-indigo-500'/>
+          <input onChange={(e)=> setEmail(e.target.value)} value={email} type="email" placeholder='Email Address' className='p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'/>
+          <input onChange={(e)=> setPassword(e.target.value)} value={password} type="password" placeholder='password' className='p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'/>
           </>
         )}
 
         {
           currState === "Sign up" && isDataSubmitted && (
-            <textarea onChange={(e)=>setBio(e.target.value)} value={bio} rows={4} className='p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500' placeholder='provide a short bio...' required></textarea>
+            <textarea onChange={(e)=>setBio(e.target.value)} value={bio} rows={4} className='p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500' placeholder='provide a short bio...'></textarea>
           )
         }
 
