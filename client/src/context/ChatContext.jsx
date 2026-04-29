@@ -82,7 +82,13 @@ export const ChatProvider = ({children}) => {
         if(socket) {
             socket.off("newMessage");
         }
-    };
+    };                                              
+
+
+
+
+
+    
 
     useEffect(() => {
         subscribeToMessages();
