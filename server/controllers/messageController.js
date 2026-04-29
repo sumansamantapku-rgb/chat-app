@@ -39,7 +39,7 @@ export const getUsersForSidebar = async (req, res)=> {
                 {senderId: selectedUserId, receiverId: myId}
 
             ]
-        })
+        }).sort({ createdAt: 1 })
         await Message.updateMany({senderId: selectedUserId, receiverId: myId}, {seen: true});
 
         res.json({success: true, messages})
@@ -73,7 +73,7 @@ export const getUsersForSidebar = async (req, res)=> {
         let imageUrl;
         if(image){
             const uploadResponse = await cloudinary.uploader.upload(image)
-            imgUrl = uploadResponse.secure_url;
+            imageUrl = uploadResponse.secure_url;
         }
 
         const newMessage = await Message.create({
